@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -734,16 +733,10 @@ tr:hover td{background:var(--card);}
         <div class="sidebar-item" onclick="clientTab('browse')" id="ct-browse">
           <span class="sidebar-icon">🔍</span> Browse Strategies
         </div>
-      </div>
-      <div class="sidebar-section" style="position:absolute;bottom:24px;width:100%;">
-        <div class="sidebar-item" onclick="doLogout()">
-          <span class="sidebar-icon">🚪</span> Logout
+        <div class="sidebar-item" onclick="clientTab('payment')" id="ct-payment">
+          <span class="sidebar-icon">💳</span> Payment
         </div>
-      </div>
-    </div>
-    <div class="dashboard-content">
-      <!-- Overview -->
-      <div id="ctab-overview" class="fade-in">
+      </div> class="fade-in">
         <div class="dashboard-header">
           <div class="dashboard-title">Welcome back, <span id="client-name">—</span></div>
           <div class="dashboard-subtitle">Your copy trading overview</div>
@@ -779,8 +772,52 @@ tr:hover td{background:var(--card);}
         </div>
       </div>
 
-      <!-- Browse Tab -->
-      <div id="ctab-browse" style="display:none;" class="fade-in">
+      <!-- Payment Tab -->
+      <div id="ctab-payment" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Payment</div>
+          <div class="dashboard-subtitle">Pay via UPI to activate your plan</div>
+        </div>
+
+        <!-- UPI Payment Card -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
+          <div class="card">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:20px;font-size:1.1rem;">📱 Pay via UPI</div>
+            <div id="upi-qr-section" style="text-align:center;margin-bottom:20px;">
+              <div id="upi-qr-img" style="width:180px;height:180px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:3rem;">📱</div>
+              <div id="upi-id-display" style="font-family:'DM Mono',monospace;font-size:1rem;color:var(--gold);background:rgba(240,180,41,0.1);padding:8px 16px;border-radius:8px;display:inline-block;">Loading...</div>
+            </div>
+            <div style="font-size:0.82rem;color:var(--muted2);line-height:1.6;text-align:center;">
+              ↑ UPI ID copy cheyyi → PhonePe/GPay/Paytm lo pay cheyyi
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:20px;font-size:1.1rem;">✅ Submit Payment</div>
+            <div class="form-group">
+              <label class="form-label">Select Plan</label>
+              <select class="form-input" id="pay-plan-id"></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Amount Paid (₹)</label>
+              <input type="number" class="form-input" id="pay-amount" placeholder="999">
+            </div>
+            <div class="form-group">
+              <label class="form-label">UTR / Transaction ID</label>
+              <input type="text" class="form-input" id="pay-utr" placeholder="12 digit UTR number">
+            </div>
+            <button class="btn btn-gold" style="width:100%;" onclick="submitPayment()">
+              Submit for Verification
+            </button>
+          </div>
+        </div>
+
+        <!-- My Payments History -->
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px;">Payment History</div>
+          <div id="my-payments-list"></div>
+        </div>
+      </div> style="display:none;" class="fade-in">
         <div class="dashboard-header">
           <div class="dashboard-title">Browse Strategies</div>
           <div class="dashboard-subtitle">Find a strategy to copy</div>
@@ -971,8 +1008,11 @@ tr:hover td{background:var(--card);}
         <div class="sidebar-item" onclick="adminTab('plans')" id="at-plans">
           <span class="sidebar-icon">💳</span> Plans
         </div>
-        <div class="sidebar-item" onclick="adminTab('subs')" id="at-subs">
-          <span class="sidebar-icon">🔗</span> Subscriptions
+        <div class="sidebar-item" onclick="adminTab('payments')" id="at-payments">
+          <span class="sidebar-icon">💰</span> Payments
+        </div>
+        <div class="sidebar-item" onclick="adminTab('upi')" id="at-upi">
+          <span class="sidebar-icon">📱</span> UPI Settings
         </div>
       </div>
       <div class="sidebar-section" style="position:absolute;bottom:24px;width:100%;">
@@ -1155,11 +1195,46 @@ tr:hover td{background:var(--card);}
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+      <!-- Payments -->
+      <div id="atab-payments" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">💰 Payments</div>
+          <div class="dashboard-subtitle">Verify UTR & approve client access</div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Client</th><th>Plan</th><th>Amount</th><th>UTR</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+              <tbody id="admin-payments-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-<!-- Subscribe Modal -->
+      <!-- UPI Settings -->
+      <div id="atab-upi" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">📱 UPI Settings</div>
+          <div class="dashboard-subtitle">Set your UPI ID & QR code for payments</div>
+        </div>
+        <div class="card" style="max-width:500px;">
+          <div class="form-group">
+            <label class="form-label">UPI ID</label>
+            <input type="text" class="form-input" id="admin-upi-id" placeholder="yourname@upi or yourname@phonepe">
+          </div>
+          <div class="form-group">
+            <label class="form-label">QR Code Image URL (optional)</label>
+            <input type="text" class="form-input" id="admin-upi-qr" placeholder="https://... (image link of your UPI QR)">
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:6px;">
+              QR image Google Drive / Imgur lo upload cheyyi → link ikkad paste cheyyi
+            </div>
+          </div>
+          <div id="upi-preview" style="margin:16px 0;display:none;">
+            <img id="upi-qr-preview-img" style="width:160px;height:160px;border-radius:12px;border:1px solid var(--border);object-fit:contain;">
+          </div>
+          <button class="btn btn-gold" onclick="saveUPISettings()">Save UPI Settings</button>
+        </div>
+      </div>
 <div class="modal-overlay" id="subscribe-modal">
   <div class="modal">
     <div class="modal-title">
@@ -1538,14 +1613,7 @@ async function doSubscribe() {
 }
 
 // ── Client Dashboard ──────────────────────────────────────────
-function clientTab(tab) {
-  ['overview','copy','browse'].forEach(t => {
-    document.getElementById('ctab-'+t).style.display = t===tab?'block':'none';
-    document.getElementById('ct-'+t).classList.toggle('active', t===tab);
-  });
-  if (tab === 'browse') loadClientBrowse();
-  if (tab === 'copy' || tab === 'overview') loadClientCopies();
-}
+// clientTab defined below with payment support
 
 async function loadClientDashboard() {
   document.getElementById('client-name').textContent = currentUser.name;
@@ -1674,7 +1742,7 @@ async function addStrategy() {
 
 // ── Admin Dashboard ───────────────────────────────────────────
 function adminTab(tab) {
-  ['overview','users','strategies','news','eas','plans','subs'].forEach(t => {
+  ['overview','users','strategies','news','eas','plans','subs','payments','upi'].forEach(t => {
     const el = document.getElementById('atab-'+t);
     const btn = document.getElementById('at-'+t);
     if (el) el.style.display = t===tab?'block':'none';
@@ -1687,6 +1755,8 @@ function adminTab(tab) {
   if (tab === 'eas') loadAdminEAs();
   if (tab === 'plans') loadAdminPlans();
   if (tab === 'subs') loadAdminSubs();
+  if (tab === 'payments') loadAdminPayments();
+  if (tab === 'upi') loadUPISettings();
 }
 
 async function loadAdminDashboard() { await loadAdminStats(); }
@@ -1875,6 +1945,150 @@ async function loadAdminSubs() {
 function toggleForm(id) {
   const el = document.getElementById(id);
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+
+// ── Payment Functions ─────────────────────────────────────────
+function clientTab(tab) {
+  ['overview','copy','browse','payment'].forEach(t => {
+    const el = document.getElementById('ctab-'+t);
+    const btn = document.getElementById('ct-'+t);
+    if(el) el.style.display = t===tab?'block':'none';
+    if(btn) btn.classList.toggle('active', t===tab);
+  });
+  if (tab === 'browse') loadClientBrowse();
+  if (tab === 'copy' || tab === 'overview') loadClientCopies();
+  if (tab === 'payment') loadPaymentTab();
+}
+
+async function loadPaymentTab() {
+  try {
+    // Load UPI settings
+    const upi = await apiGet('/api/settings/upi');
+    document.getElementById('upi-id-display').textContent = upi.upi_id || 'Not configured';
+    if (upi.qr_url) {
+      document.getElementById('upi-qr-img').innerHTML = `<img src="${upi.qr_url}" style="width:100%;height:100%;object-fit:contain;border-radius:10px;">`;
+    }
+    // Load plans for dropdown
+    const plans = await apiGet('/api/plans');
+    const sel = document.getElementById('pay-plan-id');
+    sel.innerHTML = plans.filter(p => p.price_monthly > 0 || p.type === 'subscription')
+      .map(p => `<option value="${p.id}">${p.name} — ₹${p.price_monthly || 0}/mo</option>`).join('');
+    // Auto fill amount
+    sel.onchange = () => {
+      const plan = plans.find(p => p.id === sel.value);
+      if (plan) document.getElementById('pay-amount').value = plan.price_monthly || 0;
+    };
+    sel.dispatchEvent(new Event('change'));
+    // Load my payments
+    const payments = await apiGet('/api/payments/my');
+    const el = document.getElementById('my-payments-list');
+    if (!payments.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">💳</div><div class="empty-text">No payments yet</div></div>';
+    } else {
+      el.innerHTML = `<div class="table-wrap"><table>
+        <thead><tr><th>Plan</th><th>Amount</th><th>UTR</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>${payments.map(p=>`<tr>
+          <td>${p.plan_name||p.plan_id}</td>
+          <td class="mono">₹${p.amount}</td>
+          <td class="mono" style="font-size:0.8rem">${p.utr_number}</td>
+          <td><span class="badge ${p.status==='approved'?'badge-green':p.status==='rejected'?'badge-red':'badge-gold'}">${p.status}</span></td>
+          <td style="color:var(--muted2);font-size:0.8rem">${new Date(p.created_at).toLocaleDateString()}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function submitPayment() {
+  const plan_id   = document.getElementById('pay-plan-id').value;
+  const amount    = document.getElementById('pay-amount').value;
+  const utr_number = document.getElementById('pay-utr').value.trim();
+  if (!utr_number || !amount) return toast('UTR number and amount required', 'error');
+  if (utr_number.length < 6) return toast('Enter valid UTR number', 'error');
+  try {
+    await apiPost('/api/payments/submit', { plan_id, amount, utr_number });
+    toast('Payment submitted! Admin will verify soon ✓');
+    document.getElementById('pay-utr').value = '';
+    loadPaymentTab();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ── Admin Payment Functions ───────────────────────────────────
+async function loadAdminPayments() {
+  try {
+    const payments = await apiGet('/api/admin/payments');
+    const tbody = document.getElementById('admin-payments-tbody');
+    const pending = payments.filter(p=>p.status==='pending').length;
+    tbody.innerHTML = payments.length ? payments.map(p=>`<tr>
+      <td>
+        <div style="font-weight:600">${p.client_name}</div>
+        <div style="font-size:0.75rem;color:var(--muted2)">${p.client_email}</div>
+      </td>
+      <td>${p.plan_name||p.plan_id}</td>
+      <td class="mono" style="color:var(--gold)">₹${p.amount}</td>
+      <td class="mono" style="font-size:0.82rem">${p.utr_number}</td>
+      <td><span class="badge ${p.status==='approved'?'badge-green':p.status==='rejected'?'badge-red':'badge-gold'}">${p.status}</span></td>
+      <td style="color:var(--muted2);font-size:0.8rem">${new Date(p.created_at).toLocaleDateString()}</td>
+      <td>
+        ${p.status==='pending' ? `
+          <div class="action-btns">
+            <button class="btn btn-green btn-sm" onclick="approvePayment('${p.id}')">✓ Approve</button>
+            <button class="btn btn-red btn-sm" onclick="rejectPayment('${p.id}')">✗ Reject</button>
+          </div>` : `<span style="color:var(--muted);font-size:0.8rem">${p.status}</span>`
+        }
+      </td>
+    </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No payments yet</td></tr>';
+    // Show pending count in sidebar
+    if(pending > 0) {
+      const btn = document.getElementById('at-payments');
+      if(btn) btn.innerHTML = `<span class="sidebar-icon">💰</span> Payments <span style="background:var(--red);color:#fff;border-radius:10px;padding:1px 7px;font-size:0.7rem;margin-left:4px">${pending}</span>`;
+    }
+  } catch(e) {}
+}
+
+async function approvePayment(id) {
+  try {
+    await apiPost('/api/admin/payments/'+id+'/approve', {});
+    toast('✅ Payment approved! Client access granted.');
+    loadAdminPayments();
+    loadAdminStats();
+  } catch(e) { toast(e.message,'error'); }
+}
+
+async function rejectPayment(id) {
+  if(!confirm('Reject this payment?')) return;
+  try {
+    await apiPost('/api/admin/payments/'+id+'/reject', {});
+    toast('Payment rejected');
+    loadAdminPayments();
+  } catch(e) { toast(e.message,'error'); }
+}
+
+async function loadUPISettings() {
+  try {
+    const upi = await apiGet('/api/settings/upi');
+    document.getElementById('admin-upi-id').value = upi.upi_id || '';
+    document.getElementById('admin-upi-qr').value = upi.qr_url || '';
+    if(upi.qr_url) {
+      document.getElementById('upi-preview').style.display = 'block';
+      document.getElementById('upi-qr-preview-img').src = upi.qr_url;
+    }
+  } catch(e) {}
+}
+
+async function saveUPISettings() {
+  const upi_id = document.getElementById('admin-upi-id').value.trim();
+  const qr_url = document.getElementById('admin-upi-qr').value.trim();
+  if(!upi_id) return toast('UPI ID required','error');
+  try {
+    await apiPost('/api/settings/upi', { upi_id, qr_url });
+    toast('UPI settings saved ✓');
+    if(qr_url) {
+      document.getElementById('upi-preview').style.display='block';
+      document.getElementById('upi-qr-preview-img').src = qr_url;
+    }
+  } catch(e) { toast(e.message,'error'); }
 }
 
 // ── Start ─────────────────────────────────────────────────────
