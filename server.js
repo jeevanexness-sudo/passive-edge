@@ -112,6 +112,24 @@ async function initDB() {
       price_monthly INTEGER, percentage INTEGER, description TEXT
     )
   `);
+  await dbQuery(`
+    CREATE TABLE IF NOT EXISTS payments (
+      id TEXT PRIMARY KEY, client_id TEXT, client_name TEXT, client_email TEXT,
+      plan_id TEXT, utr_number TEXT UNIQUE, amount NUMERIC,
+      status TEXT DEFAULT 'pending', approved_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+  await dbQuery(`
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY, value TEXT
+    )
+  `);
+  await dbQuery(`
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_id TEXT,
+    ADD COLUMN IF NOT EXISTS plan_expires TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS is_paid BOOLEAN DEFAULT false
+  `).catch(()=>{});
   // seed plans
   const plans = [
     ['plan_1','Starter','subscription',999,null,'Basic copy trading access'],
@@ -542,4 +560,139 @@ initDB().then(() => {
 }).catch(e => {
   console.error('DB init error:', e.message);
   app.listen(PORT, () => console.log(`✅ Server started (no DB) | Port ${PORT}`));
+});
+
+// ══════════════════════════════════════════════════════════════
+//  PAYMENT ROUTES — UPI + UTR System
+// ══════════════════════════════════════════════════════════════
+
+// In-memory payments (DB table created in initDB)
+if (!memDB.payments) memDB.payments = {};
+
+// ── Submit Payment (client submits UTR after paying) ──────────
+app.post('/api/payments/submit', auth(['client']), async (req, res) => {
+  const { plan_id, utr_number, amount } = req.body;
+  if (!plan_id || !utr_number || !amount)
+    return res.status(400).json({ error: 'plan_id, utr_number, amount required' });
+
+  // Check duplicate UTR
+  if (pool) {
+    const dup = await dbQuery(`SELECT id FROM payments WHERE utr_number=$1`, [utr_number]);
+    if (dup.length) return res.status(400).json({ error: 'UTR already submitted!' });
+  } else {
+    const dup = Object.values(memDB.payments).find(p => p.utr_number === utr_number);
+    if (dup) return res.status(400).json({ error: 'UTR already submitted!' });
+  }
+
+  const id = uuidv4();
+  const payment = {
+    id, client_id: req.user.id, client_name: req.user.name,
+    client_email: req.user.email, plan_id, utr_number,
+    amount: parseFloat(amount), status: 'pending',
+    created_at: new Date().toISOString()
+  };
+
+  if (pool) {
+    await dbQuery(`
+      INSERT INTO payments(id,client_id,client_name,client_email,plan_id,utr_number,amount,status,created_at)
+      VALUES($1,$2,$3,$4,$5,$6,$7,'pending',NOW())
+    `, [id, req.user.id, req.user.name, req.user.email, plan_id, utr_number, payment.amount]);
+  } else {
+    memDB.payments[id] = payment;
+  }
+
+  res.json({ success: true, message: 'Payment submitted! Admin will verify within 1 hour.', payment_id: id });
+});
+
+// ── Get my payments (client) ──────────────────────────────────
+app.get('/api/payments/my', auth(['client']), async (req, res) => {
+  if (pool) {
+    const rows = await dbQuery(`
+      SELECT p.*, pl.name as plan_name FROM payments p
+      LEFT JOIN plans pl ON p.plan_id=pl.id
+      WHERE p.client_id=$1 ORDER BY p.created_at DESC
+    `, [req.user.id]);
+    return res.json(rows);
+  }
+  const payments = Object.values(memDB.payments)
+    .filter(p => p.client_id === req.user.id)
+    .map(p => ({ ...p, plan_name: memDB.plans[p.plan_id]?.name || '' }));
+  res.json(payments);
+});
+
+// ── Admin — Get all pending payments ─────────────────────────
+app.get('/api/admin/payments', auth(['admin']), async (req, res) => {
+  if (pool) {
+    const rows = await dbQuery(`
+      SELECT p.*, pl.name as plan_name FROM payments p
+      LEFT JOIN plans pl ON p.plan_id=pl.id
+      ORDER BY CASE WHEN p.status='pending' THEN 0 ELSE 1 END, p.created_at DESC
+    `);
+    return res.json(rows);
+  }
+  const payments = Object.values(memDB.payments)
+    .map(p => ({ ...p, plan_name: memDB.plans[p.plan_id]?.name || '' }))
+    .sort((a,b) => a.status==='pending'?-1:1);
+  res.json(payments);
+});
+
+// ── Admin — Approve payment ───────────────────────────────────
+app.post('/api/admin/payments/:id/approve', auth(['admin']), async (req, res) => {
+  let payment;
+  if (pool) {
+    const r = await dbQuery(`SELECT * FROM payments WHERE id=$1`, [req.params.id]);
+    payment = r[0];
+  } else {
+    payment = memDB.payments[req.params.id];
+  }
+  if (!payment) return res.status(404).json({ error: 'Payment not found' });
+  if (payment.status === 'approved') return res.status(400).json({ error: 'Already approved' });
+
+  // Approve payment
+  if (pool) {
+    await dbQuery(`UPDATE payments SET status='approved', approved_at=NOW() WHERE id=$1`, [req.params.id]);
+    // Update user subscription status
+    await dbQuery(`UPDATE users SET plan_id=$1, plan_expires=NOW() + INTERVAL '30 days', is_paid=true WHERE id=$2`,
+      [payment.plan_id, payment.client_id]);
+  } else {
+    memDB.payments[req.params.id].status = 'approved';
+    memDB.payments[req.params.id].approved_at = new Date().toISOString();
+    if (memDB.users[payment.client_id]) {
+      memDB.users[payment.client_id].plan_id = payment.plan_id;
+      memDB.users[payment.client_id].is_paid = true;
+      const exp = new Date(); exp.setDate(exp.getDate()+30);
+      memDB.users[payment.client_id].plan_expires = exp.toISOString();
+    }
+  }
+  res.json({ success: true, message: 'Payment approved! Client access granted.' });
+});
+
+// ── Admin — Reject payment ────────────────────────────────────
+app.post('/api/admin/payments/:id/reject', auth(['admin']), async (req, res) => {
+  if (pool) {
+    await dbQuery(`UPDATE payments SET status='rejected' WHERE id=$1`, [req.params.id]);
+  } else if (memDB.payments[req.params.id]) {
+    memDB.payments[req.params.id].status = 'rejected';
+  }
+  res.json({ success: true });
+});
+
+// ── UPI Settings (admin sets UPI ID + QR) ────────────────────
+app.get('/api/settings/upi', async (req, res) => {
+  if (pool) {
+    const r = await dbQuery(`SELECT value FROM settings WHERE key='upi'`);
+    return res.json(r[0] ? JSON.parse(r[0].value) : { upi_id: '', qr_url: '' });
+  }
+  res.json(memDB.upiSettings || { upi_id: 'yourname@upi', qr_url: '' });
+});
+
+app.post('/api/settings/upi', auth(['admin']), async (req, res) => {
+  const { upi_id, qr_url } = req.body;
+  if (pool) {
+    await dbQuery(`INSERT INTO settings(key,value) VALUES('upi',$1) ON CONFLICT(key) DO UPDATE SET value=$1`,
+      [JSON.stringify({ upi_id, qr_url })]);
+  } else {
+    memDB.upiSettings = { upi_id, qr_url };
+  }
+  res.json({ success: true });
 });
