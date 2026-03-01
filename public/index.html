@@ -1,0 +1,1884 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PassiveEdge — Your Money Works While You Rest</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM
+═══════════════════════════════════════════════ */
+:root {
+  --bg:       #080C14;
+  --bg2:      #0D1421;
+  --bg3:      #111927;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.12);
+  --gold:     #F0B429;
+  --gold2:    #FFD166;
+  --green:    #06D6A0;
+  --red:      #EF476F;
+  --blue:     #118AB2;
+  --text:     #E8EDF5;
+  --muted:    #5A7191;
+  --muted2:   #8099B8;
+  --card:     rgba(255,255,255,0.03);
+  --card-h:   rgba(255,255,255,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ═══════════════ SCROLLBAR ═══════════════ */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--muted);border-radius:2px;}
+
+/* ═══════════════ TYPOGRAPHY ═══════════════ */
+h1,h2,h3,.syne{font-family:'Syne',sans-serif;}
+.mono{font-family:'DM Mono',monospace;}
+
+/* ═══════════════ LAYOUT ═══════════════ */
+.page{display:none;min-height:100vh;}
+.page.active{display:block;}
+.container{max-width:1200px;margin:0 auto;padding:0 24px;}
+
+/* ═══════════════ NAV ═══════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 32px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(8,12,20,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;
+  color:var(--gold);letter-spacing:1px;cursor:pointer;
+}
+.nav-logo span{color:var(--text);}
+.nav-links{display:flex;align-items:center;gap:32px;}
+.nav-link{
+  color:var(--muted2);font-size:0.9rem;cursor:pointer;
+  transition:color 0.2s;letter-spacing:0.3px;
+}
+.nav-link:hover,.nav-link.active{color:var(--text);}
+.nav-actions{display:flex;gap:12px;align-items:center;}
+.nav-user{
+  display:flex;align-items:center;gap:10px;
+  color:var(--text);font-size:0.9rem;cursor:pointer;
+}
+.nav-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;color:#000;
+}
+
+/* ═══════════════ BUTTONS ═══════════════ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 20px;border-radius:8px;border:none;
+  font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;
+  cursor:pointer;transition:all 0.2s;letter-spacing:0.2px;
+}
+.btn-gold{background:var(--gold);color:#000;}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px);}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-ghost{background:var(--card);color:var(--text);}
+.btn-ghost:hover{background:var(--card-h);}
+.btn-green{background:var(--green);color:#000;}
+.btn-green:hover{opacity:0.9;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-sm{padding:7px 14px;font-size:0.82rem;}
+.btn-lg{padding:14px 28px;font-size:1rem;}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important;}
+
+/* ═══════════════ CARDS ═══════════════ */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:24px;
+  transition:border-color 0.2s;
+}
+.card:hover{border-color:var(--border2);}
+.card-sm{padding:16px;border-radius:10px;}
+
+/* ═══════════════ FORMS ═══════════════ */
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.form-label{
+  font-size:0.78rem;color:var(--muted2);
+  font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;
+}
+.form-input{
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:8px;padding:11px 14px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:0.9rem;
+  outline:none;transition:border-color 0.2s;width:100%;
+}
+.form-input:focus{border-color:var(--gold);}
+.form-input::placeholder{color:var(--muted);}
+.form-input option{background:var(--bg2);}
+select.form-input{cursor:pointer;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* ═══════════════ BADGES ═══════════════ */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:500;
+}
+.badge-gold{background:rgba(240,180,41,0.15);color:var(--gold);}
+.badge-green{background:rgba(6,214,160,0.12);color:var(--green);}
+.badge-red{background:rgba(239,71,111,0.12);color:var(--red);}
+.badge-blue{background:rgba(17,138,178,0.15);color:#4FC3F7;}
+.badge-muted{background:rgba(255,255,255,0.06);color:var(--muted2);}
+
+/* ═══════════════ STATS ═══════════════ */
+.stat{display:flex;flex-direction:column;gap:4px;}
+.stat-val{
+  font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:700;
+}
+.stat-label{font-size:0.78rem;color:var(--muted);letter-spacing:0.5px;}
+.stat-pos{color:var(--green);}
+.stat-neg{color:var(--red);}
+
+/* ═══════════════ TABLE ═══════════════ */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{
+  text-align:left;padding:10px 14px;
+  font-size:0.75rem;color:var(--muted);
+  font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;
+  border-bottom:1px solid var(--border);
+}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:0.88rem;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--card);}
+
+/* ═══════════════ TAGS ═══════════════ */
+.risk-low{color:var(--green);}
+.risk-medium{color:var(--gold);}
+.risk-high{color:var(--red);}
+
+/* ═══════════════ TOAST ═══════════════ */
+#toast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:10px;padding:14px 20px;
+  font-size:0.88rem;transform:translateY(100px);opacity:0;
+  transition:all 0.3s;max-width:320px;
+}
+#toast.show{transform:translateY(0);opacity:1;}
+#toast.success{border-left:3px solid var(--green);}
+#toast.error{border-left:3px solid var(--red);}
+
+/* ═══════════════ MODAL ═══════════════ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  z-index:200;display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:16px;padding:32px;width:100%;max-width:500px;
+  max-height:90vh;overflow-y:auto;
+}
+.modal-title{
+  font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;
+  margin-bottom:24px;
+}
+.modal-close{
+  float:right;background:none;border:none;color:var(--muted);
+  font-size:1.2rem;cursor:pointer;margin-top:-4px;
+}
+
+/* ═══════════════ LOADER ═══════════════ */
+.loader{
+  width:18px;height:18px;border:2px solid var(--border2);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:spin 0.7s linear infinite;display:inline-block;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ═══════════════ DIVIDER ═══════════════ */
+.divider{height:1px;background:var(--border);margin:24px 0;}
+
+/* ═══════════════ SIDEBAR LAYOUT ═══════════════ */
+.dashboard-layout{
+  display:grid;grid-template-columns:220px 1fr;min-height:100vh;
+  padding-top:64px;
+}
+.sidebar{
+  background:var(--bg2);border-right:1px solid var(--border);
+  padding:24px 0;position:sticky;top:64px;height:calc(100vh - 64px);
+}
+.sidebar-section{margin-bottom:8px;}
+.sidebar-label{
+  padding:8px 20px;font-size:0.72rem;color:var(--muted);
+  font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1.5px;
+}
+.sidebar-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;cursor:pointer;color:var(--muted2);
+  font-size:0.88rem;transition:all 0.15s;border-left:2px solid transparent;
+}
+.sidebar-item:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.sidebar-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(240,180,41,0.05);}
+.sidebar-icon{font-size:1rem;width:18px;text-align:center;}
+.dashboard-content{padding:32px;overflow-y:auto;}
+.dashboard-header{margin-bottom:32px;}
+.dashboard-title{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:700;margin-bottom:4px;}
+.dashboard-subtitle{color:var(--muted2);font-size:0.88rem;}
+
+/* ═══════════════ STRATEGY CARD ═══════════════ */
+.strategy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+.strategy-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;transition:all 0.2s;cursor:pointer;
+}
+.strategy-card:hover{border-color:var(--gold);transform:translateY(-2px);}
+.strategy-card-header{
+  padding:20px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.strategy-card-body{padding:20px;}
+.strategy-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:4px;}
+.strategy-master{font-size:0.8rem;color:var(--muted2);}
+.strategy-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;}
+.strategy-stat{text-align:center;}
+.strategy-stat-val{font-family:'DM Mono',monospace;font-size:0.95rem;font-weight:500;}
+.strategy-stat-label{font-size:0.7rem;color:var(--muted);margin-top:2px;}
+
+/* ═══════════════ HERO ═══════════════ */
+.hero{
+  padding:140px 0 100px;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%, rgba(240,180,41,0.08) 0%, transparent 60%),
+             radial-gradient(ellipse 50% 40% at 80% 80%, rgba(17,138,178,0.06) 0%, transparent 50%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:800px;margin:0 auto;}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.2);
+  border-radius:20px;padding:6px 16px;
+  font-size:0.8rem;color:var(--gold);margin-bottom:28px;
+  font-family:'DM Mono',monospace;letter-spacing:0.5px;
+}
+.hero-title{
+  font-family:'Syne',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);
+  font-weight:800;line-height:1.1;margin-bottom:24px;
+}
+.hero-title .accent{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-desc{
+  font-size:1.05rem;color:var(--muted2);line-height:1.7;
+  max-width:560px;margin:0 auto 40px;
+}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+/* ═══════════════ SECTION ═══════════════ */
+.section{padding:80px 0;}
+.section-tag{
+  font-family:'DM Mono',monospace;font-size:0.75rem;
+  color:var(--gold);letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.section-title{
+  font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);
+  font-weight:700;margin-bottom:16px;
+}
+.section-desc{color:var(--muted2);font-size:0.95rem;line-height:1.7;max-width:520px;}
+
+/* ═══════════════ STATS BAR ═══════════════ */
+.stats-bar{
+  background:var(--bg2);border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);padding:28px 0;
+}
+.stats-bar-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  divide-x:1px solid var(--border);
+}
+.stats-bar-item{
+  text-align:center;padding:0 24px;
+  border-right:1px solid var(--border);
+}
+.stats-bar-item:last-child{border-right:none;}
+.stats-bar-val{
+  font-family:'Syne',sans-serif;font-size:2rem;
+  font-weight:800;color:var(--gold);margin-bottom:4px;
+}
+.stats-bar-label{font-size:0.8rem;color:var(--muted);}
+
+/* ═══════════════ NEWS GRID ═══════════════ */
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+.news-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.2s;
+}
+.news-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.news-card-img{
+  height:160px;background:linear-gradient(135deg,var(--bg2),var(--bg3));
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;
+}
+.news-card-body{padding:18px;}
+.news-card-cat{font-size:0.72rem;color:var(--gold);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.news-card-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:600;line-height:1.4;margin-bottom:8px;}
+.news-card-date{font-size:0.75rem;color:var(--muted);}
+
+/* ═══════════════ EA GRID ═══════════════ */
+.ea-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+.ea-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;transition:all 0.2s;
+}
+.ea-card:hover{border-color:var(--gold);}
+.ea-card-img{
+  height:140px;background:linear-gradient(135deg,rgba(240,180,41,0.08),rgba(17,138,178,0.08));
+  display:flex;align-items:center;justify-content:center;font-size:3rem;
+}
+.ea-card-body{padding:18px;}
+.ea-card-name{font-family:'Syne',sans-serif;font-weight:700;margin-bottom:6px;}
+.ea-card-desc{font-size:0.82rem;color:var(--muted2);margin-bottom:14px;line-height:1.5;}
+.ea-card-footer{display:flex;justify-content:space-between;align-items:center;}
+.ea-price{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--gold);font-weight:500;}
+
+/* ═══════════════ PLANS ═══════════════ */
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
+.plan-card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:14px;padding:28px;text-align:center;
+  transition:all 0.2s;position:relative;overflow:hidden;
+}
+.plan-card.featured{border-color:var(--gold);}
+.plan-card.featured::before{
+  content:'Popular';position:absolute;top:12px;right:-20px;
+  background:var(--gold);color:#000;font-size:0.65rem;font-weight:700;
+  padding:3px 30px;transform:rotate(35deg);font-family:'DM Mono',monospace;
+  text-transform:uppercase;letter-spacing:1px;
+}
+.plan-name{font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px;}
+.plan-price{
+  font-family:'Syne',sans-serif;font-size:2rem;
+  font-weight:800;color:var(--gold);margin-bottom:4px;
+}
+.plan-price-sub{font-size:0.78rem;color:var(--muted);margin-bottom:20px;}
+.plan-type-badge{
+  display:inline-block;margin-bottom:20px;
+  font-size:0.72rem;font-family:'DM Mono',monospace;
+  padding:4px 12px;border-radius:20px;
+  background:rgba(240,180,41,0.1);color:var(--gold);
+}
+
+/* ═══════════════ PERF CHART ═══════════════ */
+.perf-chart{
+  height:80px;display:flex;align-items:flex-end;gap:3px;
+  padding:8px 0;
+}
+.perf-bar{
+  flex:1;border-radius:3px 3px 0 0;min-height:4px;
+  transition:height 0.3s;
+}
+.perf-bar.pos{background:var(--green);}
+.perf-bar.neg{background:var(--red);}
+
+/* ═══════════════ TABS ═══════════════ */
+.tabs-nav{
+  display:flex;gap:4px;background:var(--bg2);
+  padding:4px;border-radius:10px;margin-bottom:24px;
+  border:1px solid var(--border);width:fit-content;
+}
+.tab-btn{
+  padding:8px 18px;border-radius:7px;border:none;
+  background:transparent;color:var(--muted2);
+  font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;
+  transition:all 0.15s;
+}
+.tab-btn.active{background:var(--bg3);color:var(--text);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ═══════════════ AUTH PAGE ═══════════════ */
+.auth-page{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  background:radial-gradient(ellipse at 50% 0%, rgba(240,180,41,0.05), transparent 60%);
+}
+.auth-card{
+  width:100%;max-width:420px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:18px;padding:40px;
+}
+.auth-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;
+  color:var(--gold);margin-bottom:8px;
+}
+.auth-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:4px;}
+.auth-sub{font-size:0.85rem;color:var(--muted2);margin-bottom:32px;}
+.auth-switch{text-align:center;margin-top:20px;font-size:0.85rem;color:var(--muted2);}
+.auth-switch a{color:var(--gold);cursor:pointer;}
+
+/* ═══════════════ ADMIN TABLE ACTIONS ═══════════════ */
+.action-btns{display:flex;gap:8px;}
+
+/* ═══════════════ EMPTY STATE ═══════════════ */
+.empty-state{
+  text-align:center;padding:60px 20px;
+  color:var(--muted);
+}
+.empty-icon{font-size:3rem;margin-bottom:16px;opacity:0.4;}
+.empty-text{font-size:0.95rem;}
+
+/* ═══════════════ RESPONSIVE ═══════════════ */
+@media(max-width:768px){
+  .form-row{grid-template-columns:1fr;}
+  .dashboard-layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .stats-bar-grid{grid-template-columns:1fr 1fr;}
+  nav{padding:0 16px;}
+  .nav-links{display:none;}
+  .hero{padding:100px 0 60px;}
+}
+
+/* ═══════════════ ANIMATIONS ═══════════════ */
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn 0.4s ease forwards;}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     NAV
+════════════════════════════════════ -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="navigate('home')">Passive<span>Edge</span></div>
+  <div class="nav-links">
+    <span class="nav-link" onclick="navigate('home')">Home</span>
+    <span class="nav-link" onclick="navigate('strategies')">Strategies</span>
+    <span class="nav-link" onclick="navigate('plans')">Plans</span>
+    <span class="nav-link" onclick="navigate('eas')">EAs</span>
+    <span class="nav-link" onclick="navigate('news')">News</span>
+  </div>
+  <div class="nav-actions" id="nav-actions">
+    <button class="btn btn-outline btn-sm" onclick="showAuth('login')">Login</button>
+    <button class="btn btn-gold btn-sm" onclick="showAuth('register')">Get Started</button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════
+     HOME PAGE
+════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="container hero-content fade-in">
+      <div class="hero-tag">💰 Automated Copy Trading Platform</div>
+      <h1 class="hero-title">
+        Your Money Works<br>
+        <span class="accent">While You Rest.</span>
+      </h1>
+        Trade Smarter.<br>
+        Copy the <span class="accent">Best Strategies.</span>
+      </h1>
+      <p class="hero-desc">
+        Connect your MT5 account to top-performing masters. 
+        Automated copy trading with real-time performance tracking.
+        No EA installation required.
+      </p>
+      <div class="hero-actions">
+        <button class="btn btn-gold btn-lg" onclick="showAuth('register')">Start Copying Trades</button>
+        <button class="btn btn-outline btn-lg" onclick="navigate('strategies')">View Strategies</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="container">
+      <div class="stats-bar-grid">
+        <div class="stats-bar-item">
+          <div class="stats-bar-val" id="stat-strategies">—</div>
+          <div class="stats-bar-label">Active Strategies</div>
+        </div>
+        <div class="stats-bar-item">
+          <div class="stats-bar-val" id="stat-clients">—</div>
+          <div class="stats-bar-label">Active Traders</div>
+        </div>
+        <div class="stats-bar-item">
+          <div class="stats-bar-val">24/7</div>
+          <div class="stats-bar-label">Automated Trading</div>
+        </div>
+        <div class="stats-bar-item">
+          <div class="stats-bar-val">MT5</div>
+          <div class="stats-bar-label">Platform Support</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Strategies -->
+  <section class="section">
+    <div class="container">
+      <div class="section-tag">Strategies</div>
+      <h2 class="section-title">Top Performing Strategies</h2>
+      <p class="section-desc" style="margin-bottom:40px;">Copy the best traders and automate your portfolio.</p>
+      <div class="strategy-grid" id="home-strategies"></div>
+      <div style="text-align:center;margin-top:32px;">
+        <button class="btn btn-outline" onclick="navigate('strategies')">View All Strategies →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest News -->
+  <section class="section" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-tag">News</div>
+      <h2 class="section-title">Market Updates</h2>
+      <div class="news-grid" id="home-news" style="margin-top:32px;"></div>
+    </div>
+  </section>
+
+  <!-- EAs Section -->
+  <section class="section">
+    <div class="container">
+      <div class="section-tag">Expert Advisors</div>
+      <h2 class="section-title">Trading EAs & Tools</h2>
+      <div class="ea-grid" id="home-eas" style="margin-top:32px;"></div>
+    </div>
+  </section>
+
+  <!-- Plans Preview -->
+  <section class="section" style="background:var(--bg2);border-top:1px solid var(--border);">
+    <div class="container">
+      <div class="section-tag">Pricing</div>
+      <h2 class="section-title">Simple, Transparent Pricing</h2>
+      <div class="plans-grid" id="home-plans" style="margin-top:40px;"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:var(--bg);border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--muted);font-size:0.82rem;">
+    <div class="container">
+      <div class="nav-logo" style="margin-bottom:12px;display:inline-block;">Alpha<span style="color:var(--text)">Flow</span></div>
+      <p>PassiveEdge — Your Money Works While You Rest. Trade responsibly.</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ════════════════════════════════════
+     STRATEGIES PAGE
+════════════════════════════════════ -->
+<div class="page" id="page-strategies">
+  <div style="padding-top:64px;">
+    <section class="section">
+      <div class="container">
+        <div class="section-tag">All Strategies</div>
+        <h2 class="section-title">Copy Trading Strategies</h2>
+        <div style="display:flex;gap:12px;margin:24px 0;flex-wrap:wrap;" id="strategy-filters">
+          <button class="btn btn-ghost btn-sm filter-btn active" data-filter="all">All</button>
+          <button class="btn btn-ghost btn-sm filter-btn" data-filter="Low">Low Risk</button>
+          <button class="btn btn-ghost btn-sm filter-btn" data-filter="Medium">Medium Risk</button>
+          <button class="btn btn-ghost btn-sm filter-btn" data-filter="High">High Risk</button>
+        </div>
+        <div class="strategy-grid" id="all-strategies"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     PLANS PAGE
+════════════════════════════════════ -->
+<div class="page" id="page-plans">
+  <div style="padding-top:64px;">
+    <section class="section">
+      <div class="container" style="text-align:center;">
+        <div class="section-tag">Pricing</div>
+        <h2 class="section-title">Choose Your Plan</h2>
+        <p class="section-desc" style="margin:0 auto 48px;">Flexible pricing — monthly subscription or profit sharing only.</p>
+        <div class="plans-grid" id="plans-list"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     EAs PAGE
+════════════════════════════════════ -->
+<div class="page" id="page-eas">
+  <div style="padding-top:64px;">
+    <section class="section">
+      <div class="container">
+        <div class="section-tag">Expert Advisors</div>
+        <h2 class="section-title">Trading EAs & Tools</h2>
+        <div class="ea-grid" id="eas-list" style="margin-top:32px;"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     NEWS PAGE
+════════════════════════════════════ -->
+<div class="page" id="page-news">
+  <div style="padding-top:64px;">
+    <section class="section">
+      <div class="container">
+        <div class="section-tag">News & Updates</div>
+        <h2 class="section-title">Market News</h2>
+        <div class="news-grid" id="news-list" style="margin-top:32px;"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     AUTH PAGE
+════════════════════════════════════ -->
+<div class="page" id="page-auth">
+  <div class="auth-page">
+    <div class="auth-card fade-in">
+      <div class="auth-logo">PassiveEdge</div>
+      <div class="auth-title" id="auth-title">Welcome Back</div>
+      <div class="auth-sub" id="auth-sub">Sign in to your account</div>
+
+      <!-- Login Form -->
+      <div id="auth-login-form">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="login-email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="login-pass" placeholder="••••••••">
+        </div>
+        <button class="btn btn-gold" style="width:100%;margin-top:8px;" onclick="doLogin()">
+          Sign In
+        </button>
+        <div class="auth-switch">
+          Don't have an account? <a onclick="showAuth('register')">Sign Up</a>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="auth-register-form" style="display:none;">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="reg-name" placeholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <select class="form-input" id="reg-role">
+              <option value="client">Client (Copy Trades)</option>
+              <option value="master">Master (Share Strategy)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="reg-email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="reg-pass" placeholder="Min 6 characters">
+        </div>
+        <button class="btn btn-gold" style="width:100%;margin-top:8px;" onclick="doRegister()">
+          Create Account
+        </button>
+        <div class="auth-switch">
+          Already have an account? <a onclick="showAuth('login')">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     CLIENT DASHBOARD
+════════════════════════════════════ -->
+<div class="page" id="page-client">
+  <div class="dashboard-layout">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Menu</div>
+        <div class="sidebar-item active" onclick="clientTab('overview')" id="ct-overview">
+          <span class="sidebar-icon">📊</span> Overview
+        </div>
+        <div class="sidebar-item" onclick="clientTab('copy')" id="ct-copy">
+          <span class="sidebar-icon">🔗</span> My Copies
+        </div>
+        <div class="sidebar-item" onclick="clientTab('browse')" id="ct-browse">
+          <span class="sidebar-icon">🔍</span> Browse Strategies
+        </div>
+      </div>
+      <div class="sidebar-section" style="position:absolute;bottom:24px;width:100%;">
+        <div class="sidebar-item" onclick="doLogout()">
+          <span class="sidebar-icon">🚪</span> Logout
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-content">
+      <!-- Overview -->
+      <div id="ctab-overview" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Welcome back, <span id="client-name">—</span></div>
+          <div class="dashboard-subtitle">Your copy trading overview</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:32px;">
+          <div class="card">
+            <div class="stat-label">Active Copies</div>
+            <div class="stat-val" id="c-active-copies">—</div>
+          </div>
+          <div class="card">
+            <div class="stat-label">Total Return</div>
+            <div class="stat-val stat-pos" id="c-total-return">—</div>
+          </div>
+          <div class="card">
+            <div class="stat-label">Best Win Rate</div>
+            <div class="stat-val" id="c-best-wr">—</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px;">Active Copies</div>
+          <div id="client-copies-list"></div>
+        </div>
+      </div>
+
+      <!-- My Copies Tab -->
+      <div id="ctab-copy" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">My Copies</div>
+          <div class="dashboard-subtitle">Manage your copy trading subscriptions</div>
+        </div>
+        <div class="card">
+          <div id="my-copies-table"></div>
+        </div>
+      </div>
+
+      <!-- Browse Tab -->
+      <div id="ctab-browse" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Browse Strategies</div>
+          <div class="dashboard-subtitle">Find a strategy to copy</div>
+        </div>
+        <div class="strategy-grid" id="client-browse-strategies"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     MASTER DASHBOARD
+════════════════════════════════════ -->
+<div class="page" id="page-master">
+  <div class="dashboard-layout">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Menu</div>
+        <div class="sidebar-item active" onclick="masterTab('overview')" id="mt-overview">
+          <span class="sidebar-icon">📊</span> Overview
+        </div>
+        <div class="sidebar-item" onclick="masterTab('strategies')" id="mt-strategies">
+          <span class="sidebar-icon">📈</span> My Strategies
+        </div>
+        <div class="sidebar-item" onclick="masterTab('add')" id="mt-add">
+          <span class="sidebar-icon">➕</span> Add Strategy
+        </div>
+      </div>
+      <div class="sidebar-section" style="position:absolute;bottom:24px;width:100%;">
+        <div class="sidebar-item" onclick="doLogout()">
+          <span class="sidebar-icon">🚪</span> Logout
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-content">
+      <!-- Overview -->
+      <div id="mtab-overview" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Master Dashboard</div>
+          <div class="dashboard-subtitle">Your strategy performance</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:32px;">
+          <div class="card">
+            <div class="stat-label">My Strategies</div>
+            <div class="stat-val" id="m-total-strats">—</div>
+          </div>
+          <div class="card">
+            <div class="stat-label">Total Followers</div>
+            <div class="stat-val" id="m-total-followers">—</div>
+          </div>
+          <div class="card">
+            <div class="stat-label">Best Return</div>
+            <div class="stat-val stat-pos" id="m-best-return">—</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px;">Strategies</div>
+          <div id="master-strategies-list"></div>
+        </div>
+      </div>
+
+      <!-- Strategies Tab -->
+      <div id="mtab-strategies" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">My Strategies</div>
+          <button class="btn btn-gold btn-sm" onclick="masterTab('add')">+ Add New</button>
+        </div>
+        <div id="master-strats-table"></div>
+      </div>
+
+      <!-- Add Strategy Tab -->
+      <div id="mtab-add" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Add Strategy</div>
+          <div class="dashboard-subtitle">Register your MT5 account as a copyable strategy</div>
+        </div>
+        <div class="card" style="max-width:600px;">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Strategy Name</label>
+              <input type="text" class="form-input" id="ms-name" placeholder="e.g. Gold Scalper Pro">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Risk Level</label>
+              <select class="form-input" id="ms-risk">
+                <option>Low</option>
+                <option selected>Medium</option>
+                <option>High</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-input" id="ms-desc" rows="3" placeholder="Describe your strategy..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">MT5 Login</label>
+              <input type="text" class="form-input" id="ms-login" placeholder="Account number">
+            </div>
+            <div class="form-group">
+              <label class="form-label">MT5 Server</label>
+              <input type="text" class="form-input" id="ms-server" placeholder="e.g. Exness-MT5">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Broker</label>
+              <input type="text" class="form-input" id="ms-broker" placeholder="e.g. Exness">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Plan Type</label>
+              <select class="form-input" id="ms-plan-type" onchange="togglePlanFields()">
+                <option value="subscription">Monthly Subscription</option>
+                <option value="profit_share">Profit Share</option>
+              </select>
+            </div>
+          </div>
+          <div id="ms-subscription-fields">
+            <div class="form-group">
+              <label class="form-label">Monthly Price (₹)</label>
+              <input type="number" class="form-input" id="ms-price" placeholder="999" value="999">
+            </div>
+          </div>
+          <div id="ms-profit-fields" style="display:none;">
+            <div class="form-group">
+              <label class="form-label">Profit Share %</label>
+              <select class="form-input" id="ms-pct">
+                <option value="5">5%</option>
+                <option value="10">10%</option>
+                <option value="20">20%</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <label class="form-label" style="margin-bottom:16px;display:block;">Performance Stats (update regularly)</label>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+              <div class="form-group">
+                <label class="form-label">Total Return %</label>
+                <input type="number" class="form-input" id="ms-total-ret" placeholder="0" value="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Monthly Return %</label>
+                <input type="number" class="form-input" id="ms-monthly-ret" placeholder="0" value="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Win Rate %</label>
+                <input type="number" class="form-input" id="ms-wr" placeholder="0" value="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Max Drawdown %</label>
+                <input type="number" class="form-input" id="ms-dd" placeholder="0" value="0">
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-gold" style="width:100%;margin-top:16px;" onclick="addStrategy()">
+            Register Strategy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     ADMIN DASHBOARD
+════════════════════════════════════ -->
+<div class="page" id="page-admin">
+  <div class="dashboard-layout">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Admin</div>
+        <div class="sidebar-item active" onclick="adminTab('overview')" id="at-overview">
+          <span class="sidebar-icon">📊</span> Overview
+        </div>
+        <div class="sidebar-item" onclick="adminTab('users')" id="at-users">
+          <span class="sidebar-icon">👥</span> Users
+        </div>
+        <div class="sidebar-item" onclick="adminTab('strategies')" id="at-strategies">
+          <span class="sidebar-icon">📈</span> Strategies
+        </div>
+        <div class="sidebar-item" onclick="adminTab('news')" id="at-news">
+          <span class="sidebar-icon">📰</span> News
+        </div>
+        <div class="sidebar-item" onclick="adminTab('eas')" id="at-eas">
+          <span class="sidebar-icon">🤖</span> EAs
+        </div>
+        <div class="sidebar-item" onclick="adminTab('plans')" id="at-plans">
+          <span class="sidebar-icon">💳</span> Plans
+        </div>
+        <div class="sidebar-item" onclick="adminTab('subs')" id="at-subs">
+          <span class="sidebar-icon">🔗</span> Subscriptions
+        </div>
+      </div>
+      <div class="sidebar-section" style="position:absolute;bottom:24px;width:100%;">
+        <div class="sidebar-item" onclick="doLogout()">
+          <span class="sidebar-icon">🚪</span> Logout
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-content">
+      <!-- Overview -->
+      <div id="atab-overview" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Admin Dashboard</div>
+          <div class="dashboard-subtitle">Platform overview</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px;margin-bottom:32px;" id="admin-stats-grid">
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px;">Quick Actions</div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;">
+            <button class="btn btn-gold btn-sm" onclick="adminTab('news');document.getElementById('admin-add-news-form').style.display='block'">+ Add News</button>
+            <button class="btn btn-outline btn-sm" onclick="adminTab('eas');document.getElementById('admin-add-ea-form').style.display='block'">+ Add EA</button>
+            <button class="btn btn-outline btn-sm" onclick="adminTab('plans');document.getElementById('admin-add-plan-form').style.display='block'">+ Add Plan</button>
+            <button class="btn btn-ghost btn-sm" onclick="adminTab('users')">Manage Users</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users -->
+      <div id="atab-users" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Users</div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table id="admin-users-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead>
+              <tbody id="admin-users-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strategies -->
+      <div id="atab-strategies" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">All Strategies</div>
+        </div>
+        <div class="strategy-grid" id="admin-strategies-grid"></div>
+      </div>
+
+      <!-- News -->
+      <div id="atab-news" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">News Management</div>
+          <button class="btn btn-gold btn-sm" onclick="toggleForm('admin-add-news-form')">+ Add News</button>
+        </div>
+        <div class="card" id="admin-add-news-form" style="display:none;margin-bottom:20px;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px;">Add News</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Title</label>
+              <input type="text" class="form-input" id="news-title" placeholder="News title">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <input type="text" class="form-input" id="news-cat" placeholder="e.g. Market, Forex, Crypto" value="General">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Content</label>
+            <textarea class="form-input" id="news-content" rows="4" placeholder="News content..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Image URL (optional)</label>
+            <input type="text" class="form-input" id="news-img" placeholder="https://...">
+          </div>
+          <button class="btn btn-gold" onclick="addNews()">Publish News</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Action</th></tr></thead>
+              <tbody id="admin-news-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- EAs -->
+      <div id="atab-eas" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">EA Products</div>
+          <button class="btn btn-gold btn-sm" onclick="toggleForm('admin-add-ea-form')">+ Add EA</button>
+        </div>
+        <div class="card" id="admin-add-ea-form" style="display:none;margin-bottom:20px;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px;">Add EA</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Name</label>
+              <input type="text" class="form-input" id="ea-name" placeholder="EA Name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Price (₹)</label>
+              <input type="number" class="form-input" id="ea-price" placeholder="0 = Free" value="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-input" id="ea-desc" rows="3" placeholder="EA description..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Image URL</label>
+              <input type="text" class="form-input" id="ea-img" placeholder="https://...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Download URL</label>
+              <input type="text" class="form-input" id="ea-download" placeholder="https://...">
+            </div>
+          </div>
+          <button class="btn btn-gold" onclick="addEA()">Add EA</button>
+        </div>
+        <div class="ea-grid" id="admin-eas-grid"></div>
+      </div>
+
+      <!-- Plans -->
+      <div id="atab-plans" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Plans</div>
+          <button class="btn btn-gold btn-sm" onclick="toggleForm('admin-add-plan-form')">+ Add Plan</button>
+        </div>
+        <div class="card" id="admin-add-plan-form" style="display:none;margin-bottom:20px;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px;">Add Plan</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Plan Name</label>
+              <input type="text" class="form-input" id="plan-name" placeholder="e.g. Gold Plan">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Type</label>
+              <select class="form-input" id="plan-type" onchange="toggleAdminPlanFields()">
+                <option value="subscription">Monthly Subscription</option>
+                <option value="profit_share">Profit Share</option>
+              </select>
+            </div>
+          </div>
+          <div id="aplan-sub-fields">
+            <div class="form-group">
+              <label class="form-label">Monthly Price (₹)</label>
+              <input type="number" class="form-input" id="plan-price" placeholder="999">
+            </div>
+          </div>
+          <div id="aplan-profit-fields" style="display:none;">
+            <div class="form-group">
+              <label class="form-label">Profit Share %</label>
+              <input type="number" class="form-input" id="plan-pct" placeholder="10">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <input type="text" class="form-input" id="plan-desc" placeholder="Plan description">
+          </div>
+          <button class="btn btn-gold" onclick="addPlan()">Add Plan</button>
+        </div>
+        <div class="plans-grid" id="admin-plans-grid"></div>
+      </div>
+
+      <!-- Subscriptions -->
+      <div id="atab-subs" style="display:none;" class="fade-in">
+        <div class="dashboard-header">
+          <div class="dashboard-title">Subscriptions</div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Client</th><th>Strategy</th><th>MT5</th><th>Multiplier</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody id="admin-subs-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Subscribe Modal -->
+<div class="modal-overlay" id="subscribe-modal">
+  <div class="modal">
+    <div class="modal-title">
+      <button class="modal-close" onclick="closeModal('subscribe-modal')">✕</button>
+      Subscribe to Strategy
+    </div>
+    <input type="hidden" id="sub-strategy-id">
+    <div class="form-group">
+      <label class="form-label">MT5 Login (Account Number)</label>
+      <input type="text" class="form-input" id="sub-mt5-login" placeholder="123456789">
+    </div>
+    <div class="form-group">
+      <label class="form-label">MT5 Password</label>
+      <input type="password" class="form-input" id="sub-mt5-pass" placeholder="••••••••">
+    </div>
+    <div class="form-group">
+      <label class="form-label">MT5 Server</label>
+      <input type="text" class="form-input" id="sub-mt5-server" placeholder="e.g. Exness-MT5Trial14">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Lot Multiplier</label>
+      <input type="number" class="form-input" id="sub-lot" value="1.0" min="0.01" step="0.01">
+    </div>
+    <button class="btn btn-gold" style="width:100%;" onclick="doSubscribe()">
+      Confirm & Subscribe
+    </button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════ -->
+<script>
+const API = window.location.origin;
+let currentUser = null;
+let token = localStorage.getItem('token');
+
+// ── Init ──────────────────────────────────────────────────────
+async function init() {
+  if (token) {
+    try {
+      const me = await apiGet('/api/auth/me');
+      currentUser = me;
+      updateNav();
+    } catch(e) {
+      token = null;
+      localStorage.removeItem('token');
+    }
+  }
+  loadPublicData();
+}
+
+// ── API helpers ───────────────────────────────────────────────
+async function apiGet(url) {
+  const r = await fetch(API + url, { headers: token ? { Authorization: 'Bearer ' + token } : {} });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error || 'Request failed');
+  return d;
+}
+async function apiPost(url, body) {
+  const r = await fetch(API + url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+    body: JSON.stringify(body)
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error || 'Request failed');
+  return d;
+}
+async function apiPut(url, body) {
+  const r = await fetch(API + url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+    body: JSON.stringify(body)
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error || 'Request failed');
+  return d;
+}
+async function apiDelete(url) {
+  const r = await fetch(API + url, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
+  return r.json();
+}
+
+// ── Toast ─────────────────────────────────────────────────────
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  setTimeout(() => el.className = '', 3000);
+}
+
+// ── Navigation ────────────────────────────────────────────────
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) { el.classList.add('active'); window.scrollTo(0,0); }
+  // Load page data
+  if (page === 'strategies') loadAllStrategies();
+  if (page === 'plans') loadPlansPage();
+  if (page === 'eas') loadEAsPage();
+  if (page === 'news') loadNewsPage();
+  if (page === 'client') loadClientDashboard();
+  if (page === 'master') loadMasterDashboard();
+  if (page === 'admin') loadAdminDashboard();
+}
+
+function updateNav() {
+  const actions = document.getElementById('nav-actions');
+  if (currentUser) {
+    actions.innerHTML = `
+      <div class="nav-user" onclick="goToDashboard()">
+        <div class="nav-avatar">${currentUser.name[0].toUpperCase()}</div>
+        <span>${currentUser.name}</span>
+      </div>
+    `;
+  } else {
+    actions.innerHTML = `
+      <button class="btn btn-outline btn-sm" onclick="showAuth('login')">Login</button>
+      <button class="btn btn-gold btn-sm" onclick="showAuth('register')">Get Started</button>
+    `;
+  }
+}
+
+function goToDashboard() {
+  if (!currentUser) { navigate('auth'); return; }
+  if (currentUser.role === 'admin') navigate('admin');
+  else if (currentUser.role === 'master') navigate('master');
+  else navigate('client');
+}
+
+// ── Auth ──────────────────────────────────────────────────────
+function showAuth(mode) {
+  navigate('auth');
+  const isLogin = mode === 'login';
+  document.getElementById('auth-login-form').style.display    = isLogin ? 'block' : 'none';
+  document.getElementById('auth-register-form').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('auth-title').textContent = isLogin ? 'Welcome Back' : 'Create Account';
+  document.getElementById('auth-sub').textContent   = isLogin ? 'Sign in to your account' : 'Join PassiveEdge today';
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  if (!email || !pass) return toast('Fill all fields', 'error');
+  try {
+    const r = await apiPost('/api/auth/login', { email, password: pass });
+    token = r.token; currentUser = r.user;
+    localStorage.setItem('token', token);
+    updateNav();
+    toast('Welcome back, ' + currentUser.name + '! ✓');
+    goToDashboard();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function doRegister() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const role  = document.getElementById('reg-role').value;
+  if (!name || !email || !pass) return toast('Fill all fields', 'error');
+  if (pass.length < 6) return toast('Password min 6 characters', 'error');
+  try {
+    const r = await apiPost('/api/auth/register', { name, email, password: pass, role });
+    token = r.token; currentUser = r.user;
+    localStorage.setItem('token', token);
+    updateNav();
+    toast('Account created! Welcome ' + name + ' ✓');
+    goToDashboard();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function doLogout() {
+  token = null; currentUser = null;
+  localStorage.removeItem('token');
+  updateNav();
+  navigate('home');
+  toast('Logged out');
+}
+
+// ── Load Public Data ──────────────────────────────────────────
+async function loadPublicData() {
+  try {
+    const [strategies, news, eas, plans] = await Promise.all([
+      apiGet('/api/strategies'), apiGet('/api/news'),
+      apiGet('/api/eas'), apiGet('/api/plans')
+    ]);
+    renderHomeStrategies(strategies.slice(0,3));
+    renderHomeNews(news.slice(0,3));
+    renderHomeEAs(eas.slice(0,3));
+    renderHomePlans(plans);
+    document.getElementById('stat-strategies').textContent = strategies.length;
+  } catch(e) { console.error(e); }
+}
+
+// ── Render helpers ────────────────────────────────────────────
+function strategyCard(s, showSubscribe = false) {
+  const returnColor = s.total_return >= 0 ? 'stat-pos' : 'stat-neg';
+  const riskClass   = 'risk-' + (s.risk_level||'').toLowerCase();
+  const bars = Array.from({length:12},(_,i)=>{
+    const h = Math.random()*60+10;
+    const pos = Math.random() > 0.3;
+    return `<div class="perf-bar ${pos?'pos':'neg'}" style="height:${h}%"></div>`;
+  }).join('');
+  return `
+    <div class="strategy-card" onclick="${showSubscribe ? `openSubscribeModal('${s.id}')` : ''}">
+      <div class="strategy-card-header">
+        <div>
+          <div class="strategy-name">${s.name}</div>
+          <div class="strategy-master">by ${s.master_name||'Unknown'}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+          <span class="badge ${s.risk_level==='Low'?'badge-green':s.risk_level==='High'?'badge-red':'badge-gold'}">${s.risk_level||'—'}</span>
+          <span class="badge badge-muted">${s.followers||0} followers</span>
+        </div>
+      </div>
+      <div class="strategy-card-body">
+        <div class="perf-chart">${bars}</div>
+        <div class="strategy-stats" style="margin-top:12px;">
+          <div class="strategy-stat">
+            <div class="strategy-stat-val ${returnColor}">+${s.total_return||0}%</div>
+            <div class="strategy-stat-label">Total Return</div>
+          </div>
+          <div class="strategy-stat">
+            <div class="strategy-stat-val">${s.win_rate||0}%</div>
+            <div class="strategy-stat-label">Win Rate</div>
+          </div>
+          <div class="strategy-stat">
+            <div class="strategy-stat-val" style="color:var(--red)">-${s.drawdown||0}%</div>
+            <div class="strategy-stat-label">Drawdown</div>
+          </div>
+        </div>
+        ${s.description ? `<p style="font-size:0.8rem;color:var(--muted2);margin-bottom:14px;line-height:1.5">${s.description}</p>` : ''}
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            ${s.plan_type === 'subscription'
+              ? `<span class="badge badge-blue">₹${s.price_monthly||0}/mo</span>`
+              : `<span class="badge badge-gold">${s.percentage||0}% profit share</span>`
+            }
+          </div>
+          ${showSubscribe && currentUser && currentUser.role === 'client'
+            ? `<button class="btn btn-gold btn-sm" onclick="event.stopPropagation();openSubscribeModal('${s.id}')">Copy</button>`
+            : `<button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showAuth('register')">Copy</button>`
+          }
+        </div>
+      </div>
+    </div>`;
+}
+
+function newsCard(n) {
+  return `
+    <div class="news-card">
+      <div class="news-card-img">${n.image_url ? `<img src="${n.image_url}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='📰'">` : '📰'}</div>
+      <div class="news-card-body">
+        <div class="news-card-cat">${n.category||'General'}</div>
+        <div class="news-card-title">${n.title}</div>
+        <p style="font-size:0.8rem;color:var(--muted2);margin:6px 0 10px;line-height:1.5">${(n.content||'').substring(0,100)}${n.content?.length>100?'...':''}</p>
+        <div class="news-card-date">${new Date(n.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+      </div>
+    </div>`;
+}
+
+function eaCard(e, adminMode = false) {
+  return `
+    <div class="ea-card">
+      <div class="ea-card-img">${e.image_url ? `<img src="${e.image_url}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='🤖'">` : '🤖'}</div>
+      <div class="ea-card-body">
+        <div class="ea-card-name">${e.name}</div>
+        <div class="ea-card-desc">${e.description||''}</div>
+        <div class="ea-card-footer">
+          <div class="ea-price">${e.price > 0 ? '₹'+e.price : 'FREE'}</div>
+          <div style="display:flex;gap:8px;">
+            ${e.download_url ? `<a href="${e.download_url}" target="_blank" class="btn btn-gold btn-sm">Download</a>` : ''}
+            ${adminMode ? `<button class="btn btn-red btn-sm" onclick="deleteEA('${e.id}')">Delete</button>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function planCard(p, showBtn = true) {
+  const isProfit = p.type === 'profit_share';
+  return `
+    <div class="plan-card ${p.name==='Pro'?'featured':''}">
+      <div class="plan-type-badge">${isProfit ? 'Profit Share' : 'Subscription'}</div>
+      <div class="plan-name">${p.name}</div>
+      <div class="plan-price">${isProfit ? p.percentage+'%' : '₹'+p.price_monthly}</div>
+      <div class="plan-price-sub">${isProfit ? 'of profits only' : 'per month'}</div>
+      <p style="font-size:0.8rem;color:var(--muted2);margin-bottom:20px;">${p.description||''}</p>
+      ${showBtn ? `<button class="btn btn-outline" style="width:100%;" onclick="showAuth('register')">Get Started</button>` : ''}
+    </div>`;
+}
+
+function renderHomeStrategies(s) {
+  const el = document.getElementById('home-strategies');
+  el.innerHTML = s.length ? s.map(x => strategyCard(x)).join('') : '<p style="color:var(--muted)">No strategies yet</p>';
+}
+function renderHomeNews(n) {
+  const el = document.getElementById('home-news');
+  el.innerHTML = n.length ? n.map(newsCard).join('') : '<p style="color:var(--muted)">No news yet</p>';
+}
+function renderHomeEAs(e) {
+  const el = document.getElementById('home-eas');
+  el.innerHTML = e.length ? e.map(x => eaCard(x)).join('') : '<p style="color:var(--muted)">No EAs yet</p>';
+}
+function renderHomePlans(p) {
+  const el = document.getElementById('home-plans');
+  el.innerHTML = p.map(x => planCard(x)).join('');
+}
+
+// ── Strategies Page ───────────────────────────────────────────
+async function loadAllStrategies() {
+  try {
+    const strategies = await apiGet('/api/strategies');
+    const el = document.getElementById('all-strategies');
+    el.innerHTML = strategies.length ? strategies.map(s => strategyCard(s, true)).join('') : '<div class="empty-state"><div class="empty-icon">📈</div><div class="empty-text">No strategies yet</div></div>';
+    // Filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        const filtered = f === 'all' ? strategies : strategies.filter(s => s.risk_level === f);
+        el.innerHTML = filtered.length ? filtered.map(s => strategyCard(s, true)).join('') : '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">No strategies found</div></div>';
+      };
+    });
+  } catch(e) { console.error(e); }
+}
+
+async function loadPlansPage() {
+  try {
+    const plans = await apiGet('/api/plans');
+    document.getElementById('plans-list').innerHTML = plans.map(p => planCard(p)).join('');
+  } catch(e) {}
+}
+async function loadEAsPage() {
+  try {
+    const eas = await apiGet('/api/eas');
+    document.getElementById('eas-list').innerHTML = eas.length ? eas.map(e => eaCard(e)).join('') : '<div class="empty-state"><div class="empty-icon">🤖</div><div class="empty-text">No EAs yet</div></div>';
+  } catch(e) {}
+}
+async function loadNewsPage() {
+  try {
+    const news = await apiGet('/api/news');
+    document.getElementById('news-list').innerHTML = news.length ? news.map(newsCard).join('') : '<div class="empty-state"><div class="empty-icon">📰</div><div class="empty-text">No news yet</div></div>';
+  } catch(e) {}
+}
+
+// ── Subscribe Modal ───────────────────────────────────────────
+function openSubscribeModal(strategyId) {
+  if (!currentUser) { showAuth('login'); return; }
+  if (currentUser.role !== 'client') { toast('Only clients can subscribe', 'error'); return; }
+  document.getElementById('sub-strategy-id').value = strategyId;
+  document.getElementById('subscribe-modal').classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+async function doSubscribe() {
+  const strategy_id  = document.getElementById('sub-strategy-id').value;
+  const mt5_login    = document.getElementById('sub-mt5-login').value.trim();
+  const mt5_password = document.getElementById('sub-mt5-pass').value;
+  const mt5_server   = document.getElementById('sub-mt5-server').value.trim();
+  const lot_multiplier = document.getElementById('sub-lot').value;
+  if (!mt5_login || !mt5_password || !mt5_server) return toast('Fill all fields', 'error');
+  try {
+    await apiPost('/api/subscriptions', { strategy_id, mt5_login, mt5_password, mt5_server, lot_multiplier });
+    closeModal('subscribe-modal');
+    toast('Subscribed successfully! ✓');
+    loadClientDashboard();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ── Client Dashboard ──────────────────────────────────────────
+function clientTab(tab) {
+  ['overview','copy','browse'].forEach(t => {
+    document.getElementById('ctab-'+t).style.display = t===tab?'block':'none';
+    document.getElementById('ct-'+t).classList.toggle('active', t===tab);
+  });
+  if (tab === 'browse') loadClientBrowse();
+  if (tab === 'copy' || tab === 'overview') loadClientCopies();
+}
+
+async function loadClientDashboard() {
+  document.getElementById('client-name').textContent = currentUser.name;
+  await loadClientCopies();
+}
+async function loadClientCopies() {
+  try {
+    const subs = await apiGet('/api/subscriptions/my');
+    document.getElementById('c-active-copies').textContent = subs.length;
+    const best = subs.reduce((a,b) => (b.total_return||0) > (a.total_return||0) ? b : a, {total_return:0});
+    document.getElementById('c-total-return').textContent = '+' + (best.total_return||0) + '%';
+    document.getElementById('c-best-wr').textContent = (subs.length ? Math.max(...subs.map(s=>s.win_rate||0)) : 0) + '%';
+    // List
+    const listEl = document.getElementById('client-copies-list');
+    if (!subs.length) {
+      listEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🔗</div><div class="empty-text">No active copies. <a onclick="clientTab(\'browse\')" style="color:var(--gold);cursor:pointer">Browse strategies →</a></div></div>';
+    } else {
+      listEl.innerHTML = `<div class="table-wrap"><table>
+        <thead><tr><th>Strategy</th><th>Master</th><th>MT5</th><th>Return</th><th>Win Rate</th><th>Action</th></tr></thead>
+        <tbody>${subs.map(s=>`<tr>
+          <td><strong>${s.strategy_name}</strong></td>
+          <td style="color:var(--muted2)">${s.master_name}</td>
+          <td class="mono">${s.mt5_login}</td>
+          <td class="stat-pos">+${s.total_return||0}%</td>
+          <td>${s.win_rate||0}%</td>
+          <td><button class="btn btn-red btn-sm" onclick="unsubscribe('${s.id}')">Stop</button></td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+      // Also update my copies table
+      document.getElementById('my-copies-table').innerHTML = listEl.innerHTML;
+    }
+  } catch(e) { console.error(e); }
+}
+async function loadClientBrowse() {
+  try {
+    const strategies = await apiGet('/api/strategies');
+    document.getElementById('client-browse-strategies').innerHTML = strategies.map(s => strategyCard(s, true)).join('');
+  } catch(e) {}
+}
+async function unsubscribe(id) {
+  if (!confirm('Stop copying this strategy?')) return;
+  try {
+    await apiDelete('/api/subscriptions/' + id);
+    toast('Unsubscribed ✓');
+    loadClientCopies();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ── Master Dashboard ──────────────────────────────────────────
+function masterTab(tab) {
+  ['overview','strategies','add'].forEach(t => {
+    document.getElementById('mtab-'+t).style.display = t===tab?'block':'none';
+    document.getElementById('mt-'+t).classList.toggle('active', t===tab);
+  });
+  if (tab === 'overview' || tab === 'strategies') loadMasterStrategies();
+}
+async function loadMasterDashboard() { await loadMasterStrategies(); }
+async function loadMasterStrategies() {
+  try {
+    const strats = await apiGet('/api/strategies/my/list');
+    document.getElementById('m-total-strats').textContent = strats.length;
+    const totalFollowers = strats.reduce((a,s)=>a+(s.followers||0),0);
+    document.getElementById('m-total-followers').textContent = totalFollowers;
+    const best = strats.reduce((a,s)=>(s.total_return||0)>(a.total_return||0)?s:a,{total_return:0});
+    document.getElementById('m-best-return').textContent = '+' + (best.total_return||0) + '%';
+    // List overview
+    document.getElementById('master-strategies-list').innerHTML = strats.length
+      ? strats.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-weight:600">${s.name}</div>
+            <div style="font-size:0.8rem;color:var(--muted2)">${s.followers||0} followers · ${s.risk_level} risk</div>
+          </div>
+          <div style="text-align:right">
+            <div style="color:var(--green);font-family:'DM Mono',monospace">+${s.total_return||0}%</div>
+            <div style="font-size:0.75rem;color:var(--muted)">total return</div>
+          </div>
+        </div>`).join('')
+      : '<div class="empty-state"><div class="empty-icon">📈</div><div class="empty-text">No strategies yet. <a onclick="masterTab(\'add\')" style="color:var(--gold);cursor:pointer">Add one →</a></div></div>';
+    // Table
+    document.getElementById('master-strats-table').innerHTML = strats.length
+      ? `<div class="table-wrap"><table>
+          <thead><tr><th>Name</th><th>Risk</th><th>Return</th><th>Win Rate</th><th>Followers</th><th>Plan</th></tr></thead>
+          <tbody>${strats.map(s=>`<tr>
+            <td><strong>${s.name}</strong></td>
+            <td class="${'risk-'+(s.risk_level||'').toLowerCase()}">${s.risk_level}</td>
+            <td class="stat-pos">+${s.total_return||0}%</td>
+            <td>${s.win_rate||0}%</td>
+            <td>${s.followers||0}</td>
+            <td><span class="badge badge-muted">${s.plan_type==='profit_share'?s.percentage+'% share':'₹'+s.price_monthly+'/mo'}</span></td>
+          </tr>`).join('')}</tbody>
+        </table></div>`
+      : '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">No strategies yet</div></div>';
+  } catch(e) { console.error(e); }
+}
+
+function togglePlanFields() {
+  const t = document.getElementById('ms-plan-type').value;
+  document.getElementById('ms-subscription-fields').style.display = t==='subscription'?'block':'none';
+  document.getElementById('ms-profit-fields').style.display       = t==='profit_share'?'block':'none';
+}
+
+async function addStrategy() {
+  const data = {
+    name:          document.getElementById('ms-name').value.trim(),
+    description:   document.getElementById('ms-desc').value.trim(),
+    risk_level:    document.getElementById('ms-risk').value,
+    plan_type:     document.getElementById('ms-plan-type').value,
+    price_monthly: +document.getElementById('ms-price').value,
+    percentage:    +document.getElementById('ms-pct').value,
+    mt5_login:     document.getElementById('ms-login').value.trim(),
+    mt5_server:    document.getElementById('ms-server').value.trim(),
+    broker:        document.getElementById('ms-broker').value.trim(),
+    total_return:  +document.getElementById('ms-total-ret').value,
+    monthly_return:+document.getElementById('ms-monthly-ret').value,
+    win_rate:      +document.getElementById('ms-wr').value,
+    drawdown:      +document.getElementById('ms-dd').value,
+  };
+  if (!data.name || !data.mt5_login || !data.mt5_server)
+    return toast('Name, MT5 Login and Server required', 'error');
+  try {
+    await apiPost('/api/strategies', data);
+    toast('Strategy added! ✓');
+    masterTab('overview');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ── Admin Dashboard ───────────────────────────────────────────
+function adminTab(tab) {
+  ['overview','users','strategies','news','eas','plans','subs'].forEach(t => {
+    const el = document.getElementById('atab-'+t);
+    const btn = document.getElementById('at-'+t);
+    if (el) el.style.display = t===tab?'block':'none';
+    if (btn) btn.classList.toggle('active', t===tab);
+  });
+  if (tab === 'overview') loadAdminStats();
+  if (tab === 'users') loadAdminUsers();
+  if (tab === 'strategies') loadAdminStrategies();
+  if (tab === 'news') loadAdminNews();
+  if (tab === 'eas') loadAdminEAs();
+  if (tab === 'plans') loadAdminPlans();
+  if (tab === 'subs') loadAdminSubs();
+}
+
+async function loadAdminDashboard() { await loadAdminStats(); }
+
+async function loadAdminStats() {
+  try {
+    const stats = await apiGet('/api/admin/stats');
+    const grid = document.getElementById('admin-stats-grid');
+    const items = [
+      ['Total Users', stats.total_users || 0, '👥'],
+      ['Clients', stats.total_clients || 0, '👤'],
+      ['Masters', stats.total_masters || 0, '📡'],
+      ['Strategies', stats.total_strategies || 0, '📈'],
+      ['Subscriptions', stats.total_subscriptions || 0, '🔗'],
+    ];
+    grid.innerHTML = items.map(([label, val, icon]) => `
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:8px;">${icon}</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;color:var(--gold)">${val}</div>
+        <div style="font-size:0.78rem;color:var(--muted)">${label}</div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function loadAdminUsers() {
+  try {
+    const users = await apiGet('/api/admin/users');
+    const tbody = document.getElementById('admin-users-tbody');
+    tbody.innerHTML = users.map(u => `<tr>
+      <td>${u.name}</td>
+      <td class="mono" style="font-size:0.82rem">${u.email}</td>
+      <td><span class="badge ${u.role==='admin'?'badge-red':u.role==='master'?'badge-gold':'badge-blue'}">${u.role}</span></td>
+      <td style="color:var(--muted2);font-size:0.8rem">${new Date(u.created_at).toLocaleDateString()}</td>
+      <td>
+        <select class="form-input" style="padding:4px 8px;font-size:0.8rem;width:auto;" onchange="changeUserRole('${u.id}',this.value)">
+          <option ${u.role==='client'?'selected':''}>client</option>
+          <option ${u.role==='master'?'selected':''}>master</option>
+          <option ${u.role==='admin'?'selected':''}>admin</option>
+        </select>
+      </td>
+    </tr>`).join('');
+  } catch(e) {}
+}
+
+async function changeUserRole(id, role) {
+  try {
+    await apiPut('/api/admin/users/'+id+'/role', { role });
+    toast('Role updated ✓');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function loadAdminStrategies() {
+  try {
+    const strats = await apiGet('/api/strategies');
+    document.getElementById('admin-strategies-grid').innerHTML = strats.map(s => strategyCard(s)).join('');
+  } catch(e) {}
+}
+
+async function loadAdminNews() {
+  try {
+    const news = await apiGet('/api/news');
+    const tbody = document.getElementById('admin-news-tbody');
+    tbody.innerHTML = news.length ? news.map(n => `<tr>
+      <td>${n.title}</td>
+      <td><span class="badge badge-muted">${n.category}</span></td>
+      <td style="color:var(--muted2);font-size:0.8rem">${new Date(n.created_at).toLocaleDateString()}</td>
+      <td><button class="btn btn-red btn-sm" onclick="deleteNews('${n.id}')">Delete</button></td>
+    </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">No news yet</td></tr>';
+  } catch(e) {}
+}
+
+async function addNews() {
+  const title   = document.getElementById('news-title').value.trim();
+  const content = document.getElementById('news-content').value.trim();
+  const category = document.getElementById('news-cat').value.trim();
+  const image_url = document.getElementById('news-img').value.trim();
+  if (!title || !content) return toast('Title and content required', 'error');
+  try {
+    await apiPost('/api/news', { title, content, category, image_url });
+    toast('News published ✓');
+    document.getElementById('news-title').value = '';
+    document.getElementById('news-content').value = '';
+    document.getElementById('news-img').value = '';
+    loadAdminNews();
+    toggleForm('admin-add-news-form');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function deleteNews(id) {
+  if (!confirm('Delete this news?')) return;
+  try { await apiDelete('/api/news/'+id); toast('Deleted ✓'); loadAdminNews(); }
+  catch(e) { toast(e.message,'error'); }
+}
+
+async function loadAdminEAs() {
+  try {
+    const eas = await apiGet('/api/eas');
+    document.getElementById('admin-eas-grid').innerHTML = eas.length ? eas.map(e => eaCard(e, true)).join('') : '<div class="empty-state"><div class="empty-icon">🤖</div><div class="empty-text">No EAs yet</div></div>';
+  } catch(e) {}
+}
+
+async function addEA() {
+  const name = document.getElementById('ea-name').value.trim();
+  const description = document.getElementById('ea-desc').value.trim();
+  const price = +document.getElementById('ea-price').value;
+  const image_url = document.getElementById('ea-img').value.trim();
+  const download_url = document.getElementById('ea-download').value.trim();
+  if (!name) return toast('Name required', 'error');
+  try {
+    await apiPost('/api/eas', { name, description, price, image_url, download_url });
+    toast('EA added ✓');
+    document.getElementById('ea-name').value = '';
+    document.getElementById('ea-desc').value = '';
+    loadAdminEAs();
+    toggleForm('admin-add-ea-form');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function deleteEA(id) {
+  if (!confirm('Delete this EA?')) return;
+  try { await apiPut('/api/eas/'+id, {active:false}); toast('Deleted ✓'); loadAdminEAs(); }
+  catch(e) { toast(e.message,'error'); }
+}
+
+async function loadAdminPlans() {
+  try {
+    const plans = await apiGet('/api/plans');
+    const grid = document.getElementById('admin-plans-grid');
+    grid.innerHTML = plans.map(p => `
+      <div class="plan-card">
+        <div class="plan-type-badge">${p.type==='profit_share'?'Profit Share':'Subscription'}</div>
+        <div class="plan-name">${p.name}</div>
+        <div class="plan-price">${p.type==='profit_share'?p.percentage+'%':'₹'+p.price_monthly}</div>
+        <div class="plan-price-sub">${p.type==='profit_share'?'of profits':'per month'}</div>
+        <p style="font-size:0.8rem;color:var(--muted2);margin-bottom:16px;">${p.description||''}</p>
+        ${!['plan_1','plan_2','plan_3','plan_4','plan_5'].includes(p.id)
+          ? `<button class="btn btn-red btn-sm" style="width:100%;" onclick="deletePlan('${p.id}')">Delete</button>`
+          : '<span class="badge badge-muted" style="width:100%;justify-content:center;">Default</span>'
+        }
+      </div>`).join('');
+  } catch(e) {}
+}
+
+function toggleAdminPlanFields() {
+  const t = document.getElementById('plan-type').value;
+  document.getElementById('aplan-sub-fields').style.display    = t==='subscription'?'block':'none';
+  document.getElementById('aplan-profit-fields').style.display = t==='profit_share'?'block':'none';
+}
+
+async function addPlan() {
+  const name = document.getElementById('plan-name').value.trim();
+  const type = document.getElementById('plan-type').value;
+  const price_monthly = +document.getElementById('plan-price').value;
+  const percentage = +document.getElementById('plan-pct').value;
+  const description = document.getElementById('plan-desc').value.trim();
+  if (!name) return toast('Name required','error');
+  try {
+    await apiPost('/api/admin/plans', {name,type,price_monthly,percentage,description});
+    toast('Plan added ✓');
+    loadAdminPlans();
+    toggleForm('admin-add-plan-form');
+  } catch(e) { toast(e.message,'error'); }
+}
+
+async function deletePlan(id) {
+  if (!confirm('Delete this plan?')) return;
+  try { await apiDelete('/api/admin/plans/'+id); toast('Deleted ✓'); loadAdminPlans(); }
+  catch(e) { toast(e.message,'error'); }
+}
+
+async function loadAdminSubs() {
+  try {
+    const subs = await apiGet('/api/admin/subscriptions');
+    const tbody = document.getElementById('admin-subs-tbody');
+    tbody.innerHTML = subs.length ? subs.map(s=>`<tr>
+      <td><div>${s.client_name}</div><div style="font-size:0.75rem;color:var(--muted2)">${s.client_email}</div></td>
+      <td>${s.strategy_name}</td>
+      <td class="mono" style="font-size:0.82rem">${s.mt5_login}</td>
+      <td class="mono">×${s.lot_multiplier}</td>
+      <td><span class="badge ${s.status==='active'?'badge-green':'badge-red'}">${s.status}</span></td>
+      <td style="color:var(--muted2);font-size:0.8rem">${new Date(s.created_at).toLocaleDateString()}</td>
+    </tr>`).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">No subscriptions yet</td></tr>';
+  } catch(e) {}
+}
+
+function toggleForm(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ── Start ─────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
